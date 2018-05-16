@@ -4,6 +4,8 @@
 #define SECS_PER_DAY  ((time_t)(SECS_PER_HOUR * 24UL))
 #define SECS_YR_2000 ((time_t)(946684800UL)) // the time at the start of y2k
 #define LEAP_YEAR(Y) ( ((1970+(Y))>0) && !((1970+(Y))%4) && ( ((1970+(Y))%100) || !((1970+(Y))%400) ) )
+#define MELBOURNE_TIMEZONE 10
+#define MELBOURNE_TIMEZONE_DST 11
 
 typedef long time_t;
 
@@ -51,21 +53,77 @@ time_t makeTime(tmElements_t tm)
   return (time_t)seconds; 
 }
 
+bool isDst(tmElements_t t) {
+  int month = t.Month;
+  int year = t.Year - 30; // 2018 becomes 18
+  int day = t.Day; 
+
+  if (month > 4 && month < 10) {
+    return false;
+  }
+
+  else if (month < 4 || month > 10) {
+    return true;
+  }
+
+  int x = (year + year/4 + 5) % 7;
+  int y = (year + year/4 + 6) % 7;
+  printf("%d\n", x);
+  printf("%d\n", y);
+
+  if ( month == 4) {
+    if ( day > (7 - x) ) {
+      return false;
+    }
+
+    else if ( day == (7 - x) ) {
+      return false;
+    }
+
+    else {
+      return true;
+    }
+  }
+
+  else if ( month == 10 ) {
+    if ( day > (7 - y) ) {
+      return true;
+    }
+
+    else if ( day == (7 - y) ) {
+      return true;
+    }
+
+    else {
+      return false;
+    }
+  }
+
+}
+
 /*
 def toMillis(date):
     return (date - epochStart).total_seconds() * 1000
 */
 
+tmElements_t specify_time(int day, int month, int year, int hour, int minute, int second) {
+    tmElements_t t;
+
+    t.Day = day;
+    t.Month = month;
+    t.Year = year - 1970;    
+    t.Wday = 1;
+    t.Minute = minute;
+    t.Second = second;
+
+    int timezone_adjustment = isDst(t) ? MELBOURNE_TIMEZONE_DST : MELBOURNE_TIMEZONE;
+    t.Hour = hour - timezone_adjustment;
+    return t;
+}
+
 int main()
 {
-    tmElements_t t;
-    t.Second = 0;
-    t.Minute = 46;
-    t.Hour = 19 - 10;
-    t.Wday = 1;
-    t.Day = 14;
-    t.Month = 5;
-    t.Year = 2018 - 1970;
+    tmElements_t t = specify_time(16,5,2018,13,04,00);
     time_t setTime = makeTime(t);
     printf("%ld\n", setTime);
     return 0;
