@@ -213,7 +213,7 @@ int main()
     //printf("%f\n", toJulian(setTime));
     //printf("%f\n", toDays(setTime));
     sun_pos p = solarPosition(setTime, latitude, longitude);
-    printf("%lf\n", 180 + p.azimuth * 180.0/3.14);
-    printf("%lf\n", p.altitude * 180.0/3.14);
+    printf("%lf\n", 180 + p.azimuth * DEG);
+    printf("%lf\n", p.altitude * DEG);
     return 0;
 }
