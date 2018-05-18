@@ -9,11 +9,12 @@
 #define MELBOURNE_TIMEZONE 10
 #define MELBOURNE_TIMEZONE_DST 11
 #define DAYS_MS 86400000
-#define DAYS_MS_SMALL 86400
+//#define DAYS_MS_SMALL 86400.000f
 #define J1970 2440588
 #define J2000 2451545
-#define PI 3.14
-#define RAD (180/PI)
+#define PI 3.14159265359
+#define RAD (PI/180.0)
+#define DEG (180.0/PI)
 #define E (RAD * 23.4397)
 
 
@@ -28,6 +29,17 @@ typedef struct  {
   int Month; 
   int Year;   // offset from 1970; 
 } tmElements_t;
+
+typedef struct {
+  double azimuth;
+  double altitude;
+} sun_pos;
+
+typedef struct {
+  double ra;
+  double dec;  
+} ra_dec;
+
 
 long long makeTime(tmElements_t tm)
 {   
@@ -107,11 +119,11 @@ bool isDst(tmElements_t t) {
 
 }
 
-float toJulian(time_t t) {
-  return (float)(t/DAYS_MS_SMALL) - 0.5 + J1970;
+double toJulian(time_t t) {
+  return (t/86400.0)  - 0.500 + 2440588.0;
 }
 
-float toDays(time_t t) {
+double toDays(time_t t) {
     return toJulian(t) - J2000;
 }
 
@@ -130,53 +142,78 @@ tmElements_t specify_time(int day, int month, int year, int hour, int minute, in
     return t;
 }
 
-float siderealTime(float d, float lw) {
+double siderealTime(double d, double lw) {
     return RAD * (280.16 + 360.9856235 * d) - lw;
 }
 
-float rightAscension(float l, float b) {
+double rightAscension(double l, double b) {
     return atan2(sin(l) * cos(E) - tan(b) * sin(E), cos(l));
 }
 
-float declination(float l, float b) {
+double declination(double l, double b) {
     return asin(sin(b) * cos(E) + cos(b) * sin(E) * sin(l));
 }
 
-float solarMeanAnomaly(float d) {
+double solarMeanAnomaly(double d) {
     return RAD * (357.5291 + 0.98560028 * d);
 }
 
-float eclipticLongitude(float M) {
-    float C = RAD * (1.9148 * sin(M) + 0.02 * sin(2 * M) + 0.0003 * sin(3 * M));  
-    float P = RAD * 102.9372;
+double eclipticLongitude(double M) {
+    double C = RAD * (1.9148 * sin(M) + 0.02 * sin(2 * M) + 0.0003 * sin(3 * M));  
+    double P = RAD * 102.9372;
     return M + C + P + PI;
 }
 
-void sunCoords(float d) {
-    float M = solarMeanAnomaly(d);
-    float L = eclipticLongitude(M);
+ra_dec sunCoords(float d){
+    double M = solarMeanAnomaly(d);
+    double L = eclipticLongitude(M);
+    ra_dec r;
+    r.ra = rightAscension(L, 0);
+    r.dec = declination(L, 0);
+    return r;
 }
 
-void solarPosition(time_t date, float latitude, float longitude) {
-    float lw = RAD * -longitude;
-    float phi = RAD * latitude;
-    float d = toDays(date);
-    //c = sunCoords(d)
-    //H = siderealTime(d, lw) - c['ra']
+double azimuth(double H, double phi, double dec){
+    return atan2(sin(H), cos(H) * sin(phi) - tan(dec) * cos(phi));
+}
+
+double altitude(double H, double phi, double dec){
+    return asin(sin(phi) * sin(dec) + cos(phi) * cos(dec) * cos(H));
+}
+
+sun_pos solarPosition(time_t date, double latitude, double longitude) {
+    double lw = RAD * -longitude;
+    double phi = RAD * latitude;
+    double d = toDays(date);
+    ra_dec c = sunCoords(d);
+    double H = siderealTime(d, lw) - c.ra;
+
+    //printf("%lu\n", date);
+    //printf("%lf\n", lw);
+    //printf("%lf\n", phi);
+    //printf("%lf\n", d);
+    //printf("%lf\n", c.dec);
+    //printf("%lf\n", c.ra);
+    //printf("%lf\n", H);
+
+    sun_pos pos;
+    pos.azimuth = azimuth(H, phi, c.dec);
+    pos.altitude = altitude(H, phi, c.dec);
+    return pos;
 }
 
 int main()
 {
-    tmElements_t t = specify_time(17,5,2018,12,47,00);
+    double latitude = -37.94514;
+    double longitude = 145.07791;
+    tmElements_t t = specify_time(18,5,2018,16,13,0);
     time_t setTime = makeTime(t);
-    //printf("%d\n", sizeof(int));
-    //printf("%d\n", sizeof(long));
-    //printf("%d\n", sizeof(long long));
-    //printf("%d\n", sizeof(setTime));
-    //printf("%d\n", sizeof(time_t));
 
-    printf("%lu\n", setTime);
-    printf("%f\n", toJulian(setTime));
-    printf("%f\n", toDays(setTime));
+    //printf("%lu\n", setTime);
+    //printf("%f\n", toJulian(setTime));
+    //printf("%f\n", toDays(setTime));
+    sun_pos p = solarPosition(setTime, latitude, longitude);
+    printf("%lf\n", 180 + p.azimuth * 180.0/3.14);
+    printf("%lf\n", p.altitude * 180.0/3.14);
     return 0;
 }
