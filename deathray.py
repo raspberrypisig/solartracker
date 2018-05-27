@@ -12,5 +12,5 @@ azimuthStepper = StepperController(
 elevationStepper = StepperController(
     STEPPER2_STEP_PIN_GPIO,
     STEPPER2_DIR_PIN_GPIO)
-azimuthStepper.moveForward(10.0)
-azimuthStepper.moveBackwards(10.0)
+azimuthStepper.moveForward(1525.0)
+#azimuthStepper.moveBackwards(1525.0)
