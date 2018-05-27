@@ -14,16 +14,13 @@ class StepperController(object):
         self.step_pin = step_pin
         self.dir_pin = dir_pin
 
-    def hardware_pwm(self, PWMfreq=650):
-        StepperController.PI.hardware_pwm(
-            self.step_pin,
-            PWMfreq,
-            StepperController.DUTY_CYCLE)
+    def pwm(self, PWMfreq=650):
+        StepperController.PI.hardware_PWM(self.step_pin,PWMfreq,StepperController.DUTY_CYCLE)
 
     def move(self, length):
         pulsetime = 0.2 * length
-        self.hardware_pwm()
-        sleep(pulsetime)
+        self.pwm()
+        sleep(pulsetime/1000)
         self.stop()
 
     def setDirection(self, direction):
@@ -31,11 +28,11 @@ class StepperController(object):
 
     def moveForward(self, length):
         self.setDirection(StepperController.CLOCKWISE)
-        move(length)
+        self.move(length)
 
     def moveBackwards(self, length):
         self.setDirection(StepperController.ANTICLOCKWISE)
-        move(length)
+        self.move(length)
 
     def stop(self):
-        self.hardware_pwm(self.step_pin, 0)
+        self.pwm(0)
