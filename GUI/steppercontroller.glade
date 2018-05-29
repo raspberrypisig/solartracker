@@ -75,6 +75,7 @@
                         <property name="receives_default">False</property>
                         <property name="active">True</property>
                         <property name="draw_indicator">True</property>
+                        <signal name="toggled" handler="unitsChanged" swapped="no"/>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -91,6 +92,7 @@
                         <property name="active">True</property>
                         <property name="draw_indicator">True</property>
                         <property name="group">steps-radiobutton</property>
+                        <signal name="toggled" handler="unitsChanged" swapped="no"/>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -139,6 +141,7 @@
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
                     <property name="image">image2</property>
+                    <signal name="clicked" handler="move" swapped="no"/>
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
@@ -151,6 +154,7 @@
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
                     <property name="image">image3</property>
+                    <signal name="clicked" handler="move" swapped="no"/>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
@@ -158,11 +162,12 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkButton">
+                  <object class="GtkButton" id="right">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
                     <property name="image">image4</property>
+                    <signal name="clicked" handler="move" swapped="no"/>
                   </object>
                   <packing>
                     <property name="left_attach">2</property>
@@ -170,11 +175,12 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkButton">
+                  <object class="GtkButton" id="down">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
                     <property name="image">image5</property>
+                    <signal name="clicked" handler="move" swapped="no"/>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
