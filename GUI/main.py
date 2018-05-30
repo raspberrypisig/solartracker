@@ -11,6 +11,23 @@ class StepperControllerHandler(object):
         self.builder = builder
         self.manager = StepperControllerManager()
         self.addMarksToSlider()
+        # keycodes
+        # https://gitlab.gnome.org/GNOME/gtk/raw/master/gdk/gdkkeysyms.h
+        key, mods = Gtk.accelerator_parse('u')
+        print(key, mods)
+        accelgroup = self.builder.get_object("mainaccel")
+
+        accelgroup.connect(
+            key,
+            mods,
+            Gtk.AccelFlags.VISIBLE, self.up)
+        #accelmap = Gtk.AccelMap.get()
+        # accelmap.change_entry(
+        #    "<Actions>/mainaccel/up",
+        #    key,
+        #    mods,
+        #    True)
+        # accelmap.save("accelmap.txt")
 
     def addMarksToSlider(self):
         slider = builder.get_object("slider")
@@ -23,6 +40,9 @@ class StepperControllerHandler(object):
 
     def unitsChanged(self, widget, data=None):
         pass
+
+    def up(self, a, b, c, d):
+        print("up")
 
     def move(self, widget, data=None):
         contstep = self.builder.get_object("contstep")
