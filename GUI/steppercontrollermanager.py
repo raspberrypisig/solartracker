@@ -8,3 +8,6 @@ class StepperControllerManager(object):
 
     def move(self, distance, direction, units):
         print(distance, direction, units)
+
+    def moveForever(self, direction):
+        print(direction)

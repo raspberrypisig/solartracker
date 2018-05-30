@@ -10,6 +10,12 @@ class StepperControllerHandler(object):
     def __init__(self, builder):
         self.builder = builder
         self.manager = StepperControllerManager()
+        self.addMarksToSlider()
+
+    def addMarksToSlider(self):
+        slider = builder.get_object("slider")
+        for mark in range(600, 3000, 100):
+            slider.add_mark(mark, Gtk.PositionType.LEFT)
 
     def getTravelDistance(self):
         travelTextBox = self.builder.get_object("travel")
@@ -19,14 +25,18 @@ class StepperControllerHandler(object):
         pass
 
     def move(self, widget, data=None):
-        distance = self.getTravelDistance()
+        contstep = self.builder.get_object("contstep")
         direction = Gtk.Buildable.get_name(widget)
-        unit_step = self.builder.get_object("steps-radiobutton")
-        if unit_step.get_active():
-            units = "step"
+        if contstep.get_active():
+            self.manager.moveForever(direction)
         else:
-            units = "mm"
-        self.manager.move(distance, direction, units)
+            distance = self.getTravelDistance()
+            unit_step = self.builder.get_object("steps-radiobutton")
+            if unit_step.get_active():
+                units = "step"
+            else:
+                units = "mm"
+            self.manager.move(distance, direction, units)
 
     def contstep_toggled(self, widget):
         box = self.builder.get_object("manualmovement")
@@ -39,6 +49,13 @@ class StepperControllerHandler(object):
 
     def stop(self, widget):
         print("stop!")
+
+    def sliderMoved(self, widget, data=None):
+        print(widget.get_value())
+
+    def reset(self, widget):
+        slider = self.builder.get_object("slider")
+        slider.set_value(650)
 
 
 if __name__ == '__main__':
