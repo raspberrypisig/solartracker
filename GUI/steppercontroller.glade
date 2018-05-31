@@ -51,6 +51,7 @@
     <accel-groups>
       <group name="mainaccel"/>
     </accel-groups>
+    <signal name="key-press-event" handler="keyPressed" swapped="no"/>
     <child>
       <object class="GtkPaned" id="panewindow">
         <property name="visible">True</property>
@@ -73,6 +74,7 @@
                     <property name="can_focus">True</property>
                     <property name="text" translatable="yes">200</property>
                     <property name="input_purpose">digits</property>
+                    <signal name="key-press-event" handler="enterPressed" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -181,7 +183,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkGrid">
+              <object class="GtkGrid" id="arrowKeys">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="receives_default">True</property>
@@ -192,6 +194,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
+                    <property name="action_name">left</property>
                     <property name="image">image2</property>
                     <signal name="clicked" handler="move" swapped="no"/>
                   </object>
@@ -205,6 +208,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
+                    <property name="action_name">up</property>
                     <property name="image">image3</property>
                     <signal name="clicked" handler="move" swapped="no"/>
                   </object>
@@ -218,6 +222,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
+                    <property name="action_name">right</property>
                     <property name="image">image4</property>
                     <signal name="clicked" handler="move" swapped="no"/>
                   </object>
@@ -231,6 +236,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
+                    <property name="action_name">down</property>
                     <property name="image">image5</property>
                     <signal name="clicked" handler="move" swapped="no"/>
                   </object>
