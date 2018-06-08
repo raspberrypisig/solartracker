@@ -1,6 +1,6 @@
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk
+from gi.repository import Gtk, Gdk
 
 from solartrackercontroller import SolarTrackerController
 
@@ -28,6 +28,8 @@ class StepperControllerHandler(object):
                 positioning_frame.set_visible(True)
 
     def stop(self, widget):
+        moving = self.builder.get_object("moving_indicator")
+        moving.set_from_file("square-rounded-red-16.png")
         self.controller.stop()
 
     def joggingDistance(self):
@@ -37,7 +39,16 @@ class StepperControllerHandler(object):
     def arrowPressed(self, widget, data=None):
         arrow = Gtk.Buildable.get_name(widget)
         distance = self.joggingDistance()
+        moving = self.builder.get_object("moving_indicator")
+        moving.set_from_file("square-rounded-green-16.png")
         self.controller.arrowPressed(arrow, distance)
+
+    def statusClicked(self, widget, data=None):
+        # widget.set_active(False)
+        widget.modify_fg(Gtk.StateFlags.NORMAL, Gdk.color_parse("green"))
+        widget.modify_bg(Gtk.StateFlags.NORMAL, Gdk.color_parse("blue"))
+        widget.modify_base(Gtk.StateFlags.NORMAL, Gdk.color_parse("red"))
+        return True
 
     def enterPressed(self, widget, data):
         if data.keyval == self.enterKey:
