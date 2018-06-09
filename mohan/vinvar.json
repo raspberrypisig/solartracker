@@ -1,0 +1,14 @@
+{
+    "bolDcMotors":false,
+    "bolUtpXed":null,
+    "bolVerbose":false,
+    "dblVersion":0.14,
+    "dblVsnDisclaimed":0.14,
+    "dblVsnWelcomed":0,
+    "dtmFirstRun":"2018-06-09 22:24:59",
+    "intLimits":[
+        null,
+        null
+    ],
+    "intRuns":2
+}
