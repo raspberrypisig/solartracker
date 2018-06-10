@@ -1,3 +1,4 @@
+import json
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gdk
@@ -10,6 +11,58 @@ class StepperControllerHandler(object):
     def __init__(self, builder):
         self.builder = builder
         self.controller = SolarTrackerController()
+        config = self.load_data_from_config("config.json")
+        self.config = config
+        self.initialiseApp()
+
+    def load_data_from_config(self, configFile):
+        configHandle = open(configFile, 'r')
+        config = json.loads(configHandle.read())
+        configHandle.close()
+        print(config)
+        return config
+
+    def initialiseApp(self):
+        data = [
+            {
+                "name": "azimuth_speed",
+                "key": "speed",
+                "subkey": "azimuth"
+            },
+            {
+                "name": "elevation_speed",
+                "key": "speed",
+                "subkey": "elevation"
+            },
+            {
+                "name": "homing_speed",
+                "key": "speed",
+                "subkey": "homing"
+            },
+            {
+                "name": "jogging_speed",
+                "key": "speed",
+                "subkey": "jogging"
+            },
+            {
+                "name": "demo_pause_interval",
+                "key": "demo",
+                "subkey": "pauseInterval"
+            },
+            {
+                "name": "jogging_distance",
+                "key": "jogging",
+                "subkey": "distance"
+            }
+        ]
+        print([self.builder.get_object(i['name']).set_text(
+            str(self.config[i['key']][i['subkey']])) for i in data])
+        '''
+        azimuth_speed = self.builder.get_object("azimuth_speed")
+        elevation_speed = self.builder.get_object("elevation_speed")
+        azimuth_speed.set_text(str(self.config["speed"]["azimuth"]))
+        elevation_speed.set_text(str(self.config["speed"]["elevation"]))
+        '''
 
     def operationSelected(self, widget, data=None):
         if widget.get_active():
@@ -29,7 +82,6 @@ class StepperControllerHandler(object):
 
     def stop(self, widget):
         moving = self.builder.get_object("moving_indicator")
-        moving.set_from_file("square-rounded-red-16.png")
         self.controller.stop()
 
     def joggingDistance(self):
@@ -39,8 +91,6 @@ class StepperControllerHandler(object):
     def arrowPressed(self, widget, data=None):
         arrow = Gtk.Buildable.get_name(widget)
         distance = self.joggingDistance()
-        moving = self.builder.get_object("moving_indicator")
-        moving.set_from_file("square-rounded-green-16.png")
         self.controller.arrowPressed(arrow, distance)
 
     def statusClicked(self, widget, data=None):
