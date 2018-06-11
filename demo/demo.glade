@@ -126,7 +126,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkButton">
+                      <object class="GtkButton" id="stop">
                         <property name="label" translatable="yes"> </property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
@@ -532,109 +532,63 @@
                         <property name="can_focus">False</property>
                         <property name="left_padding">12</property>
                         <child>
-                          <object class="GtkBox">
+                          <object class="GtkGrid">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="margin_top">10</property>
-                            <property name="orientation">vertical</property>
-                            <property name="spacing">20</property>
+                            <property name="margin_right">20</property>
+                            <property name="margin_top">60</property>
+                            <property name="row_spacing">20</property>
+                            <property name="column_spacing">20</property>
                             <child>
-                              <object class="GtkBox">
+                              <object class="GtkButton" id="home_elevation">
+                                <property name="label" translatable="yes">Home Elevation</property>
                                 <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="margin_top">20</property>
-                                <property name="spacing">20</property>
-                                <child>
-                                  <object class="GtkRadioButton" id="elevation_homing">
-                                    <property name="label" translatable="yes">Elevation</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="active">True</property>
-                                    <property name="draw_indicator">True</property>
-                                    <property name="group">both_homing</property>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkRadioButton" id="azimuth_homing">
-                                    <property name="label" translatable="yes">Azimuth</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="active">True</property>
-                                    <property name="draw_indicator">True</property>
-                                    <property name="group">both_homing</property>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">1</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkRadioButton" id="both_homing">
-                                    <property name="label" translatable="yes">Both</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="active">True</property>
-                                    <property name="draw_indicator">True</property>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">2</property>
-                                  </packing>
-                                </child>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
+                                <signal name="clicked" handler="home_elevation" swapped="no"/>
                               </object>
                               <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">True</property>
-                                <property name="position">0</property>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">0</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkBox">
+                              <object class="GtkButton" id="home_azimuth">
+                                <property name="label" translatable="yes">Home Azimuth</property>
                                 <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="margin_top">40</property>
-                                <property name="spacing">80</property>
-                                <child>
-                                  <object class="GtkButton">
-                                    <property name="label" translatable="yes">Home</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">True</property>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkButton">
-                                    <property name="label" translatable="yes">Limit</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">True</property>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">1</property>
-                                  </packing>
-                                </child>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
+                                <signal name="clicked" handler="home_azimuth" swapped="no"/>
                               </object>
                               <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">True</property>
-                                <property name="position">2</property>
+                                <property name="left_attach">1</property>
+                                <property name="top_attach">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkButton" id="limit_elevation">
+                                <property name="label" translatable="yes">Limit Elevation</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
+                                <signal name="clicked" handler="limit_elevation" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkButton" id="limit_azimuth">
+                                <property name="label" translatable="yes">Limit Azimuth</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
+                                <signal name="clicked" handler="limit_azimuth" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="left_attach">1</property>
+                                <property name="top_attach">1</property>
                               </packing>
                             </child>
                           </object>
@@ -756,11 +710,12 @@
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkButton">
+                                  <object class="GtkButton" id="demo_start">
                                     <property name="label" translatable="yes">Start</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
+                                    <signal name="clicked" handler="demo_start" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left_attach">1</property>
@@ -785,11 +740,12 @@
                                     <property name="can_focus">False</property>
                                     <property name="spacing">20</property>
                                     <child>
-                                      <object class="GtkButton">
+                                      <object class="GtkButton" id="demo_first_quarter">
                                         <property name="label" translatable="yes">1st Quarter</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
+                                        <signal name="clicked" handler="demo_first_quarter" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -798,11 +754,12 @@
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkButton">
+                                      <object class="GtkButton" id="demo_second_quarter">
                                         <property name="label" translatable="yes">2nd Quarter</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
+                                        <signal name="clicked" handler="demo_second_quarter" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -822,11 +779,12 @@
                                     <property name="can_focus">False</property>
                                     <property name="spacing">20</property>
                                     <child>
-                                      <object class="GtkButton">
+                                      <object class="GtkButton" id="demo_third_quarter">
                                         <property name="label" translatable="yes">3rd Quarter</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
+                                        <signal name="clicked" handler="demo_third_quarter" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -835,11 +793,12 @@
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkButton">
+                                      <object class="GtkButton" id="demo_fourth_quarter">
                                         <property name="label" translatable="yes">4th Quarter</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
+                                        <signal name="clicked" handler="demo_fourth_quarter" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>

@@ -19,7 +19,7 @@ class StepperControllerHandler(object):
         configHandle = open(configFile, 'r')
         config = json.loads(configHandle.read())
         configHandle.close()
-        print(config)
+        # print(config)
         return config
 
     def initialiseApp(self):
@@ -55,8 +55,8 @@ class StepperControllerHandler(object):
                 "subkey": "distance"
             }
         ]
-        print([self.builder.get_object(i['name']).set_text(
-            str(self.config[i['key']][i['subkey']])) for i in data])
+        [self.builder.get_object(i['name']).set_text(
+            str(self.config[i['key']][i['subkey']])) for i in data]
         '''
         azimuth_speed = self.builder.get_object("azimuth_speed")
         elevation_speed = self.builder.get_object("elevation_speed")
@@ -88,17 +88,37 @@ class StepperControllerHandler(object):
         travelTextBox = self.builder.get_object("jogging_distance")
         return float(travelTextBox.get_text())
 
+    def home_azimuth(self, widget, data=None):
+        print("home azimuth")
+
+    def home_elevation(self, widget, data=None):
+        print("home elevation")
+
+    def limit_azimuth(self, widget, data=None):
+        print("limit azimuth")
+
+    def limit_elevation(self, widget, data=None):
+        print("limit elevation")
+
+    def demo_start(self, widget, data=None):
+        print("start demo")
+
+    def demo_first_quarter(self, widget, data=None):
+        print("demo first quarter")
+
+    def demo_second_quarter(self, widget, data=None):
+        print("demo second quarter")
+
+    def demo_third_quarter(self, widget, data=None):
+        print("demo third quarter")
+
+    def demo_fourth_quarter(self, widget, data=None):
+        print("demo fourth quarter")
+
     def arrowPressed(self, widget, data=None):
         arrow = Gtk.Buildable.get_name(widget)
         distance = self.joggingDistance()
         self.controller.arrowPressed(arrow, distance)
-
-    def statusClicked(self, widget, data=None):
-        # widget.set_active(False)
-        widget.modify_fg(Gtk.StateFlags.NORMAL, Gdk.color_parse("green"))
-        widget.modify_bg(Gtk.StateFlags.NORMAL, Gdk.color_parse("blue"))
-        widget.modify_base(Gtk.StateFlags.NORMAL, Gdk.color_parse("red"))
-        return True
 
     def enterPressed(self, widget, data):
         if data.keyval == self.enterKey:
@@ -123,22 +143,6 @@ class StepperControllerHandler(object):
             else:
                 units = "mm"
             self.manager.move(distance, direction, units)
-
-    def contstep_toggled(self, widget):
-        box = self.builder.get_object("manualmovement")
-        if widget.get_active():
-            widget.get_image().set_from_file("greencircle.png")
-            box.set_sensitive(False)
-        else:
-            widget.get_image().set_from_file("redcircle.png")
-            box.set_sensitive(True)
-
-    def sliderMoved(self, widget, data=None):
-        print(widget.get_value())
-
-    def reset(self, widget):
-        slider = self.builder.get_object("slider")
-        slider.set_value(650)
 
     def keyPressed(self, widget, event):
         if event.keyval in self.arrowKeys:
