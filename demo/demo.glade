@@ -135,7 +135,7 @@
                         <property name="margin_top">10</property>
                         <property name="image">image1</property>
                         <property name="always_show_image">True</property>
-                        <signal name="clicked" handler="stop" swapped="no"/>
+                        <signal name="pressed" handler="stop" swapped="no"/>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -745,7 +745,7 @@
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
-                                        <signal name="clicked" handler="demo_first_quarter" swapped="no"/>
+                                        <signal name="clicked" handler="demo_start" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -759,7 +759,7 @@
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
-                                        <signal name="clicked" handler="demo_second_quarter" swapped="no"/>
+                                        <signal name="clicked" handler="demo_start" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -784,7 +784,7 @@
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
-                                        <signal name="clicked" handler="demo_third_quarter" swapped="no"/>
+                                        <signal name="clicked" handler="demo_start" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -798,7 +798,7 @@
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
-                                        <signal name="clicked" handler="demo_fourth_quarter" swapped="no"/>
+                                        <signal name="clicked" handler="demo_start" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>

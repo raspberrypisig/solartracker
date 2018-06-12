@@ -2,7 +2,6 @@ import json
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gdk
-
 from solartrackercontroller import SolarTrackerController
 
 
@@ -57,12 +56,6 @@ class StepperControllerHandler(object):
         ]
         [self.builder.get_object(i['name']).set_text(
             str(self.config[i['key']][i['subkey']])) for i in data]
-        '''
-        azimuth_speed = self.builder.get_object("azimuth_speed")
-        elevation_speed = self.builder.get_object("elevation_speed")
-        azimuth_speed.set_text(str(self.config["speed"]["azimuth"]))
-        elevation_speed.set_text(str(self.config["speed"]["elevation"]))
-        '''
 
     def operationSelected(self, widget, data=None):
         if widget.get_active():
@@ -101,32 +94,29 @@ class StepperControllerHandler(object):
         print("limit elevation")
 
     def demo_start(self, widget, data=None):
-        print("start demo")
+        azimuthTextBox = self.builder.get_object("azimuth_speed")
+        elevationTextBox = self.builder.get_object("elevation_speed")
+        self.controller.setAzimuthSpeed(int(azimuthTextBox.get_text()))
+        self.controller.setElevationSpeed(int(elevationTextBox.get_text()))
 
-    def demo_first_quarter(self, widget, data=None):
-        print("demo first quarter")
-
-    def demo_second_quarter(self, widget, data=None):
-        print("demo second quarter")
-
-    def demo_third_quarter(self, widget, data=None):
-        print("demo third quarter")
-
-    def demo_fourth_quarter(self, widget, data=None):
-        print("demo fourth quarter")
+        widgetname = Gtk.Buildable.get_name(widget)
+        if widgetname == 'demo_start':
+            pauseInterval = int(self.builder.get_object(
+                "demo_pause_interval").get_text())
+            self.controller.demo_start(pauseInterval)
+        elif widgetname == 'demo_first_quarter':
+            self.controller.demo_first_quarter()
+        elif widgetname == 'demo_second_quarter':
+            self.controller.demo_second_quarter()
+        elif widgetname == 'demo_third_quarter':
+            self.controller.demo_third_quarter()
+        elif widgetname == 'demo_fourth_quarter':
+            self.controller.demo_fourth_quarter()
 
     def arrowPressed(self, widget, data=None):
         arrow = Gtk.Buildable.get_name(widget)
         distance = self.joggingDistance()
         self.controller.arrowPressed(arrow, distance)
-
-    def enterPressed(self, widget, data):
-        if data.keyval == self.enterKey:
-            print("enter pressed")
-            grid = self.builder.get_object("slider")
-            grid.grab_focus()
-            widget.grab_remove()
-        return False
 
     def move(self, widget, data=None, direction=None):
         print(widget)
@@ -143,15 +133,6 @@ class StepperControllerHandler(object):
             else:
                 units = "mm"
             self.manager.move(distance, direction, units)
-
-    def keyPressed(self, widget, event):
-        if event.keyval in self.arrowKeys:
-            # print(Gtk.Buildable.get_name(widget))
-            # print(event.keyval)
-            self.arrowPressed(event.keyval)
-            return True
-        return False
-
 
 if __name__ == '__main__':
     builder = Gtk.Builder()
