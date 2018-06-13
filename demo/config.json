@@ -10,6 +10,10 @@
     },
     "demo": {
         "pauseInterval": 10
+    },
+    "sunposition": {
+        "latitude": -37.94514,
+        "longitude": 145.07791
     }
 
 }

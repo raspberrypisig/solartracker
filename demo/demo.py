@@ -3,6 +3,7 @@ import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gdk
 from solartrackercontroller import SolarTrackerController
+from suncalc import getFinalSolarPosition
 
 
 class StepperControllerHandler(object):
@@ -52,6 +53,16 @@ class StepperControllerHandler(object):
                 "name": "jogging_distance",
                 "key": "jogging",
                 "subkey": "distance"
+            },
+            {
+                "name": "sunposition_latitude",
+                "key": "sunposition",
+                "subkey": "latitude"
+            },
+            {
+                "name": "sunposition_longitude",
+                "key": "sunposition",
+                "subkey": "longitude"
             }
         ]
         [self.builder.get_object(i['name']).set_text(
@@ -81,17 +92,18 @@ class StepperControllerHandler(object):
         travelTextBox = self.builder.get_object("jogging_distance")
         return float(travelTextBox.get_text())
 
-    def home_azimuth(self, widget, data=None):
-        print("home azimuth")
-
-    def home_elevation(self, widget, data=None):
-        print("home elevation")
-
-    def limit_azimuth(self, widget, data=None):
-        print("limit azimuth")
-
-    def limit_elevation(self, widget, data=None):
-        print("limit elevation")
+    def home(self, widget, data=None):
+        widgetname = Gtk.Buildable.get_name(widget)
+        PWMfreqTextBox = self.builder.get_object("homing_speed")
+        PWMfreq = int(PWMfreqTextBox.get_text())
+        if widgetname == 'home_azimuth':
+            self.controller.home_azimuth(PWMfreq)
+        elif widgetname == 'home_elevation':
+            self.controller.home_elevation(PWMfreq)
+        elif widgetname == 'limit_elevation':
+            self.controller.limit_elevation(PWMfreq)
+        elif widgetname == 'limit_azimuth':
+            self.controller.limit_azimuth(PWMfreq)
 
     def demo_start(self, widget, data=None):
         azimuthTextBox = self.builder.get_object("azimuth_speed")
@@ -133,6 +145,18 @@ class StepperControllerHandler(object):
             else:
                 units = "mm"
             self.manager.move(distance, direction, units)
+
+    def sunposition_calculate(self, widget, data=None):
+        latitudeTextBox = self.builder.get_object("sunposition_latitude")
+        longitudeTextBox = self.builder.get_object("sunposition_longitude")
+        latitude = float(latitudeTextBox.get_text())
+        longitude = float(longitudeTextBox.get_text())
+        position = getFinalSolarPosition(latitude, longitude)
+        azimuthLabel = self.builder.get_object("sunposition_azimuth")
+        azimuthLabel.set_text(str(position['azimuth']))
+        elevationLabel = self.builder.get_object("sunposition_elevation")
+        elevationLabel.set_text(str(position['elevation']))
+
 
 if __name__ == '__main__':
     builder = Gtk.Builder()

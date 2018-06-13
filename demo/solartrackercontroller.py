@@ -98,6 +98,18 @@ class SolarTrackerController(object):
         # sleep(pauseInterval)
         # self.demo_fourth_quarter()
 
+    def home_azimuth(self, PWMfreq):
+        self.azimuthStepper.moveForever(StepperMotor.REVERSE)
+
+    def home_elevation(self, PWMfreq):
+        self.azimuthStepper.moveForever(StepperMotor.FORWARD)
+
+    def limit_azimuth(self, PWMfreq):
+        self.azimuthStepper.moveForever(StepperMotor.FORWARD)
+
+    def limit_elevation(self, PWMfreq):
+        self.elevationStepper.moveForever(StepperMotor.REVERSE)
+
     def arrowPressed(self, arrow, distance):
         if arrow == 'uparrow':
             self.elevationStepper.move(
