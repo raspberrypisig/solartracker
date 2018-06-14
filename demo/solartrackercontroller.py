@@ -7,6 +7,7 @@ class StepperMotor:
     FORWARD = 1
     REVERSE = 0
     DUTY_CYCLE = 128
+    STEPS_PER_REV = 200.0
 
     def __init__(self, stepPin, dirPin):
         self.stepPin = stepPin
@@ -22,12 +23,18 @@ class StepperMotor:
         #self.pi.set_mode(self.stepPin, pigpio.OUTPUT)
         #self.pi.write(self.stepPin, level=0)
 
-    def move(self, distance, direction, speed=650):
-        print(distance, direction, speed)
+    def move(self, distance, direction, PWMfreq):
+        print(distance, "mm", direction, PWMfreq, "hz")
         self.position = self.position + distance
+        #self.pi.set_PWM_dutycycle(self.stepPin, 128)
+        #self.pi.set_PWM_frequency(self.stepPin, PWMfreq)
+        #sleep(distance * STEPS_PER_REV / PWMfreq)
+        # self.stop()
 
+    '''
     def setSpeed(self, PWMfreq):
         self.PWMfreq = PWMfreq
+    '''
 
     def setDirection(self, direction):
         if direction == StepperMotor.FORWARD:
@@ -38,12 +45,12 @@ class StepperMotor:
             print("moving in reverse...")
             #GPIO.output(self.dirPin, StepperMotor.REVERSE )
 
-    def moveForever(self, direction):
+    def moveForever(self, direction, PWMfreq):
         self.setDirection(direction)
         print("Moving forever...")
-        print("PWMfreq", self.PWMfreq)
+        print("PWMfreq", PWMfreq, "Hz")
         #self.pi.set_PWM_dutycycle(self.stepPin, StepperMotor.DUTY_CYCLE)
-        #self.pi.set_PWM_frequency(self.stepPin, self.PWMfreq)
+        #self.pi.set_PWM_frequency(self.stepPin, PWMfreq)
 
     def getPosition(self):
         return self.position
@@ -99,29 +106,33 @@ class SolarTrackerController(object):
         # self.demo_fourth_quarter()
 
     def home_azimuth(self, PWMfreq):
-        self.azimuthStepper.moveForever(StepperMotor.REVERSE)
+        self.azimuthStepper.moveForever(
+            direction=StepperMotor.REVERSE, PWMfreq=PWMfreq)
 
     def home_elevation(self, PWMfreq):
-        self.azimuthStepper.moveForever(StepperMotor.FORWARD)
+        self.azimuthStepper.moveForever(
+            direction=StepperMotor.FORWARD, PWMfreq=PWMfreq)
 
     def limit_azimuth(self, PWMfreq):
-        self.azimuthStepper.moveForever(StepperMotor.FORWARD)
+        self.azimuthStepper.moveForever(
+            direction=StepperMotor.FORWARD, PWMfreq=PWMfreq)
 
     def limit_elevation(self, PWMfreq):
-        self.elevationStepper.moveForever(StepperMotor.REVERSE)
+        self.elevationStepper.moveForever(
+            direction=StepperMotor.REVERSE, PWMfreq=PWMfreq)
 
-    def arrowPressed(self, arrow, distance):
+    def arrowPressed(self, arrow, distance, PWMfreq):
         if arrow == 'uparrow':
             self.elevationStepper.move(
-                distance=distance, direction=StepperMotor.HIGH)
+                distance=distance, direction=StepperMotor.FORWARD, PWMfreq=PWMfreq)
 
         elif arrow == 'downarrow':
             self.elevationStepper.move(
-                distance=distance, direction=StepperMotor.LOW)
+                distance=distance, direction=StepperMotor.REVERSE, PWMfreq=PWMfreq)
 
         elif arrow == 'leftarrow':
             self.azimuthStepper.move(
-                distance=distance, direction=StepperMotor.HIGH)
+                distance=distance, direction=StepperMotor.REVERSE, PWMfreq=PWMfreq)
         else:
             self.azimuthStepper.move(
-                distance=distance, direction=StepperMotor.LOW)
+                distance=distance, direction=StepperMotor.FORWARD, PWMfreq=PWMfreq)

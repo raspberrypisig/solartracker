@@ -128,8 +128,11 @@ class StepperControllerHandler(object):
     def arrowPressed(self, widget, data=None):
         arrow = Gtk.Buildable.get_name(widget)
         distance = self.joggingDistance()
-        self.controller.arrowPressed(arrow, distance)
+        joggingPWMfreqTextBox = self.builder.get_object("jogging_speed")
+        joggingPWMFreq = joggingPWMfreqTextBox.get_text()
+        self.controller.arrowPressed(arrow, distance, joggingPWMFreq)
 
+    '''
     def move(self, widget, data=None, direction=None):
         print(widget)
         contstep = self.builder.get_object("contstep")
@@ -145,6 +148,7 @@ class StepperControllerHandler(object):
             else:
                 units = "mm"
             self.manager.move(distance, direction, units)
+    '''
 
     def sunposition_calculate(self, widget, data=None):
         latitudeTextBox = self.builder.get_object("sunposition_latitude")
