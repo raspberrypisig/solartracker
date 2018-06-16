@@ -3,8 +3,8 @@
         "distance": 10
     },
     "speed": {
-        "elevation": 466,
-        "azimuth": 900,
+        "elevation": 700,
+        "azimuth": 525,
         "homing": 800,
         "jogging": 500
     },
