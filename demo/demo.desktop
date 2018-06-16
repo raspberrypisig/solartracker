@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=Demo
+Comment=Demo for solar tracker
+Exec=bash -c 'cd /home/pi/Desktop/demo && /usr/bin/python3 /home/pi/Desktop/demo/demo.py'
+Icon=/home/pi/Desktop/demo/space-satellite-dish-icon.png
+Encoding=UTF-8
+Type=Application

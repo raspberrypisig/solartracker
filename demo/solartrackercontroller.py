@@ -1,6 +1,6 @@
 from time import sleep
-#import pigpio
-#import RPi.GPIO as GPIO
+import pigpio
+import RPi.GPIO as GPIO
 
 
 class StepperMotor:
@@ -13,15 +13,15 @@ class StepperMotor:
         self.stepPin = stepPin
         self.dirPin = dirPin
         self.position = 0
-        #self.pi = pigpio.pi()
-        # GPIO.setmode(GPIO.BCM)
-        # GPIO.setwarnings(False)
-        #GPIO.setup(self.dirPin, GPIO.OUT)
+        self.pi = pigpio.pi()
+        GPIO.setmode(GPIO.BCM)
+        GPIO.setwarnings(False)
+        GPIO.setup(self.dirPin, GPIO.OUT)
 
     def stop(self):
         print("stop")
-        #self.pi.set_mode(self.stepPin, pigpio.OUTPUT)
-        #self.pi.write(self.stepPin, level=0)
+        self.pi.set_mode(self.stepPin, pigpio.OUTPUT)
+        self.pi.write(self.stepPin, level=0)
 
     def move(self, distance, direction, PWMfreq):
         print(distance, "mm", direction, PWMfreq, "hz")
@@ -31,36 +31,35 @@ class StepperMotor:
         #sleep(distance * STEPS_PER_REV / PWMfreq)
         # self.stop()
 
-    '''
     def setSpeed(self, PWMfreq):
         self.PWMfreq = PWMfreq
-    '''
 
     def setDirection(self, direction):
         if direction == StepperMotor.FORWARD:
             print("moving forward...")
-            #GPIO.output(self.dirPin, StepperMotor.FORWARD )
+            GPIO.output(self.dirPin, StepperMotor.FORWARD)
 
         else:
             print("moving in reverse...")
-            #GPIO.output(self.dirPin, StepperMotor.REVERSE )
+            GPIO.output(self.dirPin, StepperMotor.REVERSE)
 
     def moveForever(self, direction, PWMfreq):
         self.setDirection(direction)
+        print("Step Pin:", self.stepPin)
         print("Moving forever...")
         print("PWMfreq", PWMfreq, "Hz")
-        #self.pi.set_PWM_dutycycle(self.stepPin, StepperMotor.DUTY_CYCLE)
-        #self.pi.set_PWM_frequency(self.stepPin, PWMfreq)
+        self.pi.set_PWM_dutycycle(self.stepPin, 128)
+        self.pi.set_PWM_frequency(self.stepPin, PWMfreq)
 
     def getPosition(self):
         return self.position
 
 
 class SolarTrackerController(object):
-    ELEVATION_STEP_PIN = 12
-    ELEVATION_DIR_PIN = 4
-    AZIMUTH_STEP_PIN = 13
-    AZIMUTH_DIR_PIN = 5
+    ELEVATION_STEP_PIN = 11
+    ELEVATION_DIR_PIN = 27
+    AZIMUTH_STEP_PIN = 22
+    AZIMUTH_DIR_PIN = 17
 
     def __init__(self):
         self.elevationStepper = StepperMotor(
@@ -110,7 +109,7 @@ class SolarTrackerController(object):
             direction=StepperMotor.REVERSE, PWMfreq=PWMfreq)
 
     def home_elevation(self, PWMfreq):
-        self.azimuthStepper.moveForever(
+        self.elevationStepper.moveForever(
             direction=StepperMotor.FORWARD, PWMfreq=PWMfreq)
 
     def limit_azimuth(self, PWMfreq):
