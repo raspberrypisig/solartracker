@@ -39,10 +39,12 @@ GPIO=19
 
 pi.set_mode(GPIO, pigpio.OUTPUT)
 
-tx_pulses(pi, GPIO, 100, 25) # 25 pulses @ 100 Hz
+#tx_pulses(pi, GPIO, 100, 25) # 25 pulses @ 100 Hz
 
-tx_pulses(pi, GPIO, 1000, 250) # 250 pulses @ 1000 Hz
+#tx_pulses(pi, GPIO, 1000, 250) # 250 pulses @ 1000 Hz
 
-tx_pulses(pi, GPIO, 5000, 2391, pulse_len=50) # 2391 pulses @ 5000 Hz
+#tx_pulses(pi, GPIO, 5000, 2391, pulse_len=50) # 2391 pulses @ 5000 Hz
 
+tx_pulses(pi, GPIO, 650 ,200) # 200 steps at 650Hz
+ 
 pi.stop()
