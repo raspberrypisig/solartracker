@@ -14,6 +14,10 @@ def tx_pulses(pi, GPIO, hertz, num, pulse_len=1):
 
    wf = []
 
+   
+   #Mohan
+   pulse_length = length_us/2
+   
    wf.append(pigpio.pulse(1<<GPIO, 0, pulse_len))
    wf.append(pigpio.pulse(0, 1<<GPIO, length_us - pulse_len))
 
