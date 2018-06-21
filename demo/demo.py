@@ -1,9 +1,11 @@
 import json
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, Gdk
+from gi.repository import Gtk, Gdk, GObject
 from solartrackercontroller import SolarTrackerController
 from suncalc import getFinalSolarPosition
+import threading
+from time import sleep
 
 
 class StepperControllerHandler(object):
@@ -14,6 +16,12 @@ class StepperControllerHandler(object):
         config = self.load_data_from_config("config.json")
         self.config = config
         self.initialiseApp()
+        self.position = {
+            'azimuth': 0,
+            'elevation': 0
+        }
+        builder.get_object("position_azimuth").set_text(str(0))
+        builder.get_object("position_elevation").set_text(str(0))
 
     def load_data_from_config(self, configFile):
         configHandle = open(configFile, 'r')
@@ -161,16 +169,42 @@ class StepperControllerHandler(object):
         elevationLabel = self.builder.get_object("sunposition_elevation")
         elevationLabel.set_text(str(position['elevation']))
 
+    def startTimer(self):
+        GObject.timeout_add_seconds(1, self.updateGUI)
 
-if __name__ == '__main__':
+    def updateGUI(self):
+        positionAzimuthLabel = self.builder.get_object("position_azimuth")
+        positionElevationLabel = self.builder.get_object("position_elevation")
+        positionElevation = self.position['elevation'] + 1
+        self.position['elevation'] = positionElevation
+        positionElevationLabel.set_text(str(positionElevation))
+        return True
+
+
+def app_main():
     builder = Gtk.Builder()
     builder.add_from_file("demo.glade")
 
     window = builder.get_object("mainwindow")
     window.connect("destroy", Gtk.main_quit)
+    window.show_all()
+
+    def updateGUI():
+        print("hello")
+
+    def startTimer():
+        GObject.timeout_add_seconds(1, updateGUI)
+        sleep(2)
+
+    # GObject.threads_init()
 
     handler = StepperControllerHandler(builder)
     builder.connect_signals(handler)
+    thread = threading.Thread(target=handler.startTimer)
+    thread.daemon = True
+    thread.start()
 
-    window.show_all()
+
+if __name__ == '__main__':
+    app_main()
     Gtk.main()
