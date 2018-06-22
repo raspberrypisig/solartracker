@@ -541,16 +541,16 @@
                             <property name="row_spacing">20</property>
                             <property name="column_spacing">20</property>
                             <child>
-                              <object class="GtkButton" id="home_elevation">
-                                <property name="label" translatable="yes">Home Elevation</property>
+                              <object class="GtkButton" id="limit_elevation">
+                                <property name="label" translatable="yes">Limit Elevation</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
                                 <signal name="clicked" handler="home" swapped="no"/>
                               </object>
                               <packing>
-                                <property name="left_attach">0</property>
-                                <property name="top_attach">0</property>
+                                <property name="left_attach">1</property>
+                                <property name="top_attach">2</property>
                               </packing>
                             </child>
                             <child>
@@ -562,21 +562,21 @@
                                 <signal name="clicked" handler="home" swapped="no"/>
                               </object>
                               <packing>
-                                <property name="left_attach">1</property>
-                                <property name="top_attach">0</property>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">1</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkButton" id="limit_elevation">
-                                <property name="label" translatable="yes">Limit Elevation</property>
+                              <object class="GtkButton" id="home_elevation">
+                                <property name="label" translatable="yes">Home Elevation</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
                                 <signal name="clicked" handler="home" swapped="no"/>
                               </object>
                               <packing>
-                                <property name="left_attach">0</property>
-                                <property name="top_attach">1</property>
+                                <property name="left_attach">1</property>
+                                <property name="top_attach">0</property>
                               </packing>
                             </child>
                             <child>
@@ -588,9 +588,24 @@
                                 <signal name="clicked" handler="home" swapped="no"/>
                               </object>
                               <packing>
-                                <property name="left_attach">1</property>
+                                <property name="left_attach">2</property>
                                 <property name="top_attach">1</property>
                               </packing>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
                             </child>
                           </object>
                         </child>
@@ -680,7 +695,6 @@
                               <object class="GtkGrid">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="margin_left">30</property>
                                 <property name="margin_top">20</property>
                                 <property name="margin_bottom">20</property>
                                 <property name="row_spacing">20</property>
