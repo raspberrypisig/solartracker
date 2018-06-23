@@ -14,10 +14,8 @@ def tx_pulses(pi, GPIO, hertz, num, pulse_len=1):
 
    wf = []
 
-   
    #Mohan
    pulse_length = length_us/2
-   
    wf.append(pigpio.pulse(1<<GPIO, 0, pulse_len))
    wf.append(pigpio.pulse(0, 1<<GPIO, length_us - pulse_len))
 
@@ -35,7 +33,7 @@ pi = pigpio.pi()
 if not pi.connected:
    exit()
 
-GPIO=19
+GPIO=22
 
 pi.set_mode(GPIO, pigpio.OUTPUT)
 
@@ -45,6 +43,6 @@ pi.set_mode(GPIO, pigpio.OUTPUT)
 
 #tx_pulses(pi, GPIO, 5000, 2391, pulse_len=50) # 2391 pulses @ 5000 Hz
 
-tx_pulses(pi, GPIO, 650 ,200) # 200 steps at 650Hz
+tx_pulses(pi, GPIO, 650 ,2000) # 200 steps at 650Hz
  
 pi.stop()
