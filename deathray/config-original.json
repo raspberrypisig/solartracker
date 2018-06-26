@@ -1,0 +1,19 @@
+{
+    "jogging": {
+        "distance": 10
+    },
+    "speed": {
+        "elevation": 466,
+        "azimuth": 900,
+        "homing": 800,
+        "jogging": 500
+    },
+    "demo": {
+        "pauseInterval": 10
+    },
+    "sunposition": {
+        "latitude": -37.94514,
+        "longitude": 145.07791
+    }
+
+}
