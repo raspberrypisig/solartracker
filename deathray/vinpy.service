@@ -1,0 +1,10 @@
+[Unit]
+Description=Vin python script
+
+[Service]
+Type=simple
+ExecStart=usr/bin/python /home/pi/Documents/smile/python/vin.py
+ExecStop=/bin/kill -9 $MAINPID
+
+[Install]
+WantedBy=multi-user.target
