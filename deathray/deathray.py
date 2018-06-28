@@ -6,6 +6,8 @@ from solartrackercontroller import SolarTrackerController
 from suncalc import getFinalSolarPosition
 import threading
 from time import sleep
+from datetime import datetime
+import pytz
 
 
 class StepperControllerHandler(object):
@@ -22,6 +24,11 @@ class StepperControllerHandler(object):
         }
         builder.get_object("position_azimuth").set_text(str(0))
         builder.get_object("position_elevation").set_text(str(0))
+
+        ampm = builder.get_object("ampm")
+        ampm.append_text("AM")
+        ampm.append_text("PM")
+        ampm.set_active(0)
 
     def load_data_from_config(self, configFile):
         configHandle = open(configFile, 'r')
@@ -160,7 +167,32 @@ class StepperControllerHandler(object):
         longitudeTextBox = self.builder.get_object("sunposition_longitude")
         latitude = float(latitudeTextBox.get_text())
         longitude = float(longitudeTextBox.get_text())
-        position = getFinalSolarPosition(latitude, longitude)
+        day = int(self.builder.get_object("day").get_text())
+        month = int(self.builder.get_object("month").get_text())
+        year = int(self.builder.get_object("year").get_text())
+        hour = int(self.builder.get_object("hour").get_text())
+        minute = int(self.builder.get_object("minute").get_text())
+        ampm = self.builder.get_object("ampm")
+        if ampm.get_active_text() == 'PM':
+            if hour != 12:
+                hour = hour + 12
+        localtz = pytz.timezone('Australia/Melbourne')
+        enteredTime = datetime(
+            year, month, day, hour, minute)
+        utcTime = localtz.localize(enteredTime).astimezone(pytz.utc)
+        print(utcTime.year,
+              utcTime.month,
+              utcTime.day,
+              utcTime.hour,
+              utcTime.minute)
+        adjustedTime = datetime(
+            utcTime.year,
+            utcTime.month,
+            utcTime.day,
+            utcTime.hour,
+            utcTime.minute)
+        print(adjustedTime)
+        position = getFinalSolarPosition(latitude, longitude, adjustedTime)
         azimuthLabel = self.builder.get_object("sunposition_azimuth")
         azimuthLabel.set_text(str(position['azimuth']))
         elevationLabel = self.builder.get_object("sunposition_elevation")
@@ -176,6 +208,23 @@ class StepperControllerHandler(object):
         self.position['elevation'] = positionElevation
         positionElevationLabel.set_text(str(positionElevation))
         return True
+
+    def changeTab(self, notebook, paned, tab):
+        # sunposition tab
+        if tab == 2:
+            now = datetime.now()
+            self.builder.get_object("day").set_text(str(now.day))
+            self.builder.get_object("month").set_text(str(now.month))
+            self.builder.get_object("year").set_text(str(now.year))
+            self.builder.get_object("minute").set_text(
+                '{d:02}'.format(d=now.minute))
+            if now.hour > 12:
+                hour = now.hour - 12
+                self.builder.get_object("ampm").set_active(1)
+            else:
+                hour = now.hour
+                self.builder.get_object("ampm").set_active(0)
+            self.builder.get_object("hour").set_text(str(hour))
 
 
 def app_main():

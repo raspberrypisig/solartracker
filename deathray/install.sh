@@ -5,4 +5,5 @@ sudo cp vinpy.service /etc/systemd/system
 sudo systemctl daemon-reload
 sudo systemctl start vinpy
 sudo systemctl enable vinpy
-
+sudo pip install pytz
+sudo pip3 install pytz

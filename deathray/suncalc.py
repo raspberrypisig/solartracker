@@ -83,9 +83,8 @@ def solarPosition(date, lat, lng):
     }
 
 
-def getFinalSolarPosition(latitude, longitude):
-    now = datetime.utcnow()
-    position = solarPosition(now, latitude, longitude)
+def getFinalSolarPosition(latitude, longitude, currentTime=datetime.utcnow()):
+    position = solarPosition(currentTime, latitude, longitude)
     azimuth = position['azimuth'] * 180.0 / pi
     altitude = position['altitude'] * 180.0 / pi
     pos = {
