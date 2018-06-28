@@ -8,12 +8,17 @@ import threading
 from time import sleep
 from datetime import datetime
 import pytz
+from stepperjobcontrol import StepperJobControl
+from queue import Queue
 
 
 class StepperControllerHandler(object):
 
-    def __init__(self, builder):
+    def __init__(self, builder, sendQueue, receiveQueue):
         self.builder = builder
+        self.sendQueue = sendQueue
+        self.receiveQueue = receiveQueue
+
         self.controller = SolarTrackerController()
         config = self.load_data_from_config("config.json")
         self.config = config
@@ -117,50 +122,16 @@ class StepperControllerHandler(object):
         elif widgetname == 'limit_azimuth':
             self.controller.limit_azimuth(PWMfreq)
 
-    def demo_start(self, widget, data=None):
-        azimuthTextBox = self.builder.get_object("azimuth_speed")
-        elevationTextBox = self.builder.get_object("elevation_speed")
-        self.controller.setAzimuthSpeed(int(azimuthTextBox.get_text()))
-        self.controller.setElevationSpeed(int(elevationTextBox.get_text()))
-
-        widgetname = Gtk.Buildable.get_name(widget)
-        if widgetname == 'demo_start':
-            pauseInterval = int(self.builder.get_object(
-                "demo_pause_interval").get_text())
-            self.controller.demo_start(pauseInterval)
-        elif widgetname == 'demo_first_quarter':
-            self.controller.demo_first_quarter()
-        elif widgetname == 'demo_second_quarter':
-            self.controller.demo_second_quarter()
-        elif widgetname == 'demo_third_quarter':
-            self.controller.demo_third_quarter()
-        elif widgetname == 'demo_fourth_quarter':
-            self.controller.demo_fourth_quarter()
-
     def arrowPressed(self, widget, data=None):
         arrow = Gtk.Buildable.get_name(widget)
         distance = self.joggingDistance()
-        joggingPWMfreqTextBox = self.builder.get_object("jogging_speed")
-        joggingPWMFreq = joggingPWMfreqTextBox.get_text()
-        self.controller.arrowPressed(arrow, distance, joggingPWMFreq)
-
-    '''
-    def move(self, widget, data=None, direction=None):
-        print(widget)
-        contstep = self.builder.get_object("contstep")
-        if direction is None:
-            direction = Gtk.Buildable.get_name(widget)
-        if contstep.get_active():
-            self.manager.moveForever(direction)
-        else:
-            distance = self.getTravelDistance()
-            unit_step = self.builder.get_object("steps-radiobutton")
-            if unit_step.get_active():
-                units = "step"
-            else:
-                units = "mm"
-            self.manager.move(distance, direction, units)
-    '''
+        PWMfreqTextBox = self.builder.get_object("jogging_speed")
+        PWMFreq = PWMfreqTextBox.get_text()
+        self.controller.arrowPressed(arrow, distance, PWMFreq)
+        self.sendQueue.put({
+            'arrow': arrow,
+            'distance': distance,
+            'PWMFreq': PWMFreq})
 
     def sunposition_calculate(self, widget, data=None):
         latitudeTextBox = self.builder.get_object("sunposition_latitude")
@@ -202,11 +173,17 @@ class StepperControllerHandler(object):
         GObject.timeout_add_seconds(1, self.updateGUI)
 
     def updateGUI(self):
-        positionAzimuthLabel = self.builder.get_object("position_azimuth")
-        positionElevationLabel = self.builder.get_object("position_elevation")
-        positionElevation = self.position['elevation'] + 1
-        self.position['elevation'] = positionElevation
-        positionElevationLabel.set_text(str(positionElevation))
+        data = None
+        while not self.receiveQueue.empty():
+            data = self.receiveQueue.get()
+            azimuth = str(data['azimuth'])
+            elevation = str(data['elevation'])
+            positionAzimuthLabel = self.builder.get_object(
+                "position_azimuth")
+            positionAzimuthLabel.set_text(azimuth)
+            positionElevationLabel = self.builder.get_object(
+                "position_elevation")
+            positionElevationLabel.set_text(elevation)
         return True
 
     def changeTab(self, notebook, paned, tab):
@@ -235,21 +212,19 @@ def app_main():
     window.connect("destroy", Gtk.main_quit)
     window.show_all()
 
-    def updateGUI():
-        print("hello")
+    sendQueue = Queue()
+    receiveQueue = Queue()
 
-    def startTimer():
-        GObject.timeout_add_seconds(1, updateGUI)
-        sleep(2)
-
-    # GObject.threads_init()
-
-    handler = StepperControllerHandler(builder)
+    handler = StepperControllerHandler(builder, sendQueue, receiveQueue)
     builder.connect_signals(handler)
-    thread = threading.Thread(target=handler.startTimer)
-    thread.daemon = True
-    thread.start()
 
+    updateTimer = threading.Thread(target=handler.startTimer)
+    updateTimer.daemon = True
+    updateTimer.start()
+
+    jobControl = StepperJobControl(sendQueue, receiveQueue)
+    jobControl.daemon = True
+    jobControl.start()
 
 if __name__ == '__main__':
     app_main()
