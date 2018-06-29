@@ -15,21 +15,26 @@ class StepperJobControl(threading.Thread):
         print("StepperJobControl running...")
         while True:
             data = self.receiveQueue.get()
-            distance = data['distance']
-            arrow = data['arrow']
-            if arrow == 'uparrow':
-                elevation = elevation - distance
+            command = data['command']
+            if command == 'position':
+                azimuth = data['azimuth']
+                elevation = data['elevation']
+            elif command == 'move':
+                distance = data['distance']
+                arrow = data['arrow']
+                if arrow == 'uparrow':
+                    elevation = elevation - distance
 
-            elif arrow == 'downarrow':
-                elevation = elevation + distance
+                elif arrow == 'downarrow':
+                    elevation = elevation + distance
 
-            elif arrow == 'leftarrow':
-                azimuth = azimuth + distance
+                elif arrow == 'leftarrow':
+                    azimuth = azimuth + distance
 
-            elif arrow == 'rightarrow':
-                azimuth = azimuth - distance
+                elif arrow == 'rightarrow':
+                    azimuth = azimuth - distance
 
-            self.sendQueue.put({
-                'azimuth': azimuth,
-                'elevation': elevation
-            })
+                self.sendQueue.put({
+                    'azimuth': azimuth,
+                    'elevation': elevation
+                })

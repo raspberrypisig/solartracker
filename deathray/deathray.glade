@@ -828,6 +828,32 @@
                                     <property name="top_attach">1</property>
                                   </packing>
                                 </child>
+                                <child>
+                                  <object class="GtkButton" id="zero_elevation">
+                                    <property name="label" translatable="yes">Set To Zero</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                    <signal name="clicked" handler="zero_elevation" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">2</property>
+                                    <property name="top_attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkButton" id="zero_azimuth">
+                                    <property name="label" translatable="yes">Set To Zero</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                    <signal name="clicked" handler="zero_azimuth" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">2</property>
+                                    <property name="top_attach">1</property>
+                                  </packing>
+                                </child>
                               </object>
                             </child>
                           </object>

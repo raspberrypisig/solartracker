@@ -127,8 +127,9 @@ class StepperControllerHandler(object):
         distance = self.joggingDistance()
         PWMfreqTextBox = self.builder.get_object("jogging_speed")
         PWMFreq = PWMfreqTextBox.get_text()
-        self.controller.arrowPressed(arrow, distance, PWMFreq)
+        #self.controller.arrowPressed(arrow, distance, PWMFreq)
         self.sendQueue.put({
+            'command': 'move',
             'arrow': arrow,
             'distance': distance,
             'PWMFreq': PWMFreq})
@@ -176,14 +177,13 @@ class StepperControllerHandler(object):
         data = None
         while not self.receiveQueue.empty():
             data = self.receiveQueue.get()
-            azimuth = str(data['azimuth'])
-            elevation = str(data['elevation'])
-            positionAzimuthLabel = self.builder.get_object(
-                "position_azimuth")
-            positionAzimuthLabel.set_text(azimuth)
-            positionElevationLabel = self.builder.get_object(
-                "position_elevation")
-            positionElevationLabel.set_text(elevation)
+            azimuth = data['azimuth']
+            elevation = data['elevation']
+            self.position = {
+                'azimuth': azimuth,
+                'elevation': elevation
+            }
+            self.updatePosition()
         return True
 
     def changeTab(self, notebook, paned, tab):
@@ -202,6 +202,27 @@ class StepperControllerHandler(object):
                 hour = now.hour
                 self.builder.get_object("ampm").set_active(0)
             self.builder.get_object("hour").set_text(str(hour))
+
+    def updatePosition(self):
+        positionAzimuthLabel = self.builder.get_object(
+            "position_azimuth")
+        positionAzimuthLabel.set_text(str(self.position['azimuth']))
+        positionElevationLabel = self.builder.get_object(
+            "position_elevation")
+        positionElevationLabel.set_text(str(self.position['elevation']))
+        self.sendQueue.put({
+            'command': 'position',
+            'azimuth': self.position['azimuth'],
+            'elevation': self.position['elevation']
+        })
+
+    def zero_elevation(self, widget, data=None):
+        self.position['elevation'] = 0
+        self.updatePosition()
+
+    def zero_azimuth(self, widget, data=None):
+        self.position['azimuth'] = 0
+        self.updatePosition()
 
 
 def app_main():
