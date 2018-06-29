@@ -2,7 +2,7 @@ import json
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gdk, GObject
-from solartrackercontroller import SolarTrackerController
+#from solartrackercontroller import SolarTrackerController
 from suncalc import getFinalSolarPosition
 import threading
 from time import sleep
@@ -19,7 +19,7 @@ class StepperControllerHandler(object):
         self.sendQueue = sendQueue
         self.receiveQueue = receiveQueue
 
-        self.controller = SolarTrackerController()
+        #self.controller = SolarTrackerController()
         config = self.load_data_from_config("config.json")
         self.config = config
         self.initialiseApp()
@@ -102,8 +102,9 @@ class StepperControllerHandler(object):
                 positioning_frame.set_visible(True)
 
     def stop(self, widget):
-        moving = self.builder.get_object("moving_indicator")
-        self.controller.stop()
+        self.sendQueue.put({
+            'command': 'stop'
+        })
 
     def joggingDistance(self):
         travelTextBox = self.builder.get_object("jogging_distance")
@@ -113,21 +114,17 @@ class StepperControllerHandler(object):
         widgetname = Gtk.Buildable.get_name(widget)
         PWMfreqTextBox = self.builder.get_object("homing_speed")
         PWMfreq = int(PWMfreqTextBox.get_text())
-        if widgetname == 'home_azimuth':
-            self.controller.home_azimuth(PWMfreq)
-        elif widgetname == 'home_elevation':
-            self.controller.home_elevation(PWMfreq)
-        elif widgetname == 'limit_elevation':
-            self.controller.limit_elevation(PWMfreq)
-        elif widgetname == 'limit_azimuth':
-            self.controller.limit_azimuth(PWMfreq)
+        self.sendQueue.put({
+            'command': 'home',
+            'action': widgetname,
+            'PWMfreq': PWMfreq
+        })
 
     def arrowPressed(self, widget, data=None):
         arrow = Gtk.Buildable.get_name(widget)
         distance = self.joggingDistance()
         PWMfreqTextBox = self.builder.get_object("jogging_speed")
         PWMFreq = PWMfreqTextBox.get_text()
-        #self.controller.arrowPressed(arrow, distance, PWMFreq)
         self.sendQueue.put({
             'command': 'move',
             'arrow': arrow,

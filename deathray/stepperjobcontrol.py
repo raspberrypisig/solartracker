@@ -1,5 +1,6 @@
 import threading
 from time import sleep
+from solartrackercontroller import SolarTrackerController
 
 
 class StepperJobControl(threading.Thread):
@@ -8,6 +9,7 @@ class StepperJobControl(threading.Thread):
         threading.Thread.__init__(self)
         self.receiveQueue = receiveQueue
         self.sendQueue = sendQueue
+        self.controller = SolarTrackerController()
 
     def run(self):
         azimuth = 0
@@ -38,3 +40,10 @@ class StepperJobControl(threading.Thread):
                     'azimuth': azimuth,
                     'elevation': elevation
                 })
+            elif command == 'home':
+                action = data['action']
+                PWMfreq = data['PWMfreq']
+                getattr(self.controller, action)(PWMfreq)
+
+            elif command == 'stop':
+                self.controller.stop()

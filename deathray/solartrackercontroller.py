@@ -37,10 +37,14 @@ class StepperMotor:
     def setDirection(self, direction):
         if direction == StepperMotor.FORWARD:
             print("moving forward...")
+            self.pi.set_mode(self.stepPin, pigpio.OUTPUT)
+            self.pi.write(self.stepPin, 1)
             #GPIO.output(self.dirPin, StepperMotor.FORWARD)
 
         else:
             print("moving in reverse...")
+            self.pi.set_mode(self.stepPin, pigpio.OUTPUT)
+            self.pi.write(self.stepPin, 0)
             #GPIO.output(self.dirPin, StepperMotor.REVERSE)
 
     def moveForever(self, direction, PWMfreq=None):
@@ -80,38 +84,6 @@ class SolarTrackerController(object):
     def setElevationSpeed(self, PWMfreq):
         self.elevationStepper.setSpeed(PWMfreq)
 
-    def demo_first_quarter(self):
-        self.elevationStepper.moveForever(StepperMotor.FORWARD)
-        self.azimuthStepper.moveForever(StepperMotor.FORWARD)
-
-    def demo_second_quarter(self):
-        self.elevationStepper.moveForever(StepperMotor.REVERSE)
-        self.azimuthStepper.moveForever(StepperMotor.FORWARD)
-
-    def demo_third_quarter(self):
-        self.elevationStepper.moveForever(StepperMotor.REVERSE)
-        self.azimuthStepper.moveForever(StepperMotor.FORWARD)
-
-    def demo_fourth_quarter(self):
-        self.elevationStepper.moveForever(StepperMotor.FORWARD)
-        self.azimuthStepper.moveForever(StepperMotor.FORWARD)
-
-    def demo_start(self, pauseInterval):
-        print("demo starting...")
-        self.demo_first_quarter()
-        sleep(42)
-        self.demo_second_quarter()
-        sleep(42)
-        self.stop()
-
-        # self.demo_first_quarter()
-        # sleep(pauseInterval)
-        # self.demo_second_quarter()
-        # sleep(pauseInterval)
-        # self.demo_third_quarter()
-        # sleep(pauseInterval)
-        # self.demo_fourth_quarter()
-
     def home_azimuth(self, PWMfreq):
         self.azimuthStepper.moveForever(
             direction=StepperMotor.FORWARD, PWMfreq=PWMfreq)
@@ -128,6 +100,7 @@ class SolarTrackerController(object):
         self.elevationStepper.moveForever(
             direction=StepperMotor.FORWARD, PWMfreq=PWMfreq)
 
+    '''
     def arrowPressed(self, arrow, distance, PWMfreq):
         if arrow == 'uparrow':
             self.elevationStepper.move(
@@ -143,3 +116,27 @@ class SolarTrackerController(object):
         else:
             self.azimuthStepper.move(
                 distance=distance, direction=StepperMotor.FORWARD, PWMfreq=PWMfreq)
+    '''
+
+    def tx_pulses(pi, GPIO, hertz, num, pulse_len=1):
+        assert hertz < 500000
+        length_us = int(1000000 / hertz)
+        assert int(pulse_len) < length_us
+        assert num < 65536
+
+        num_low = num % 256
+        num_high = num // 256
+
+        wf = []
+        pulse_length = length_us / 2
+        wf.append(pigpio.pulse(1 << GPIO, 0, pulse_len))
+        wf.append(pigpio.pulse(0, 1 << GPIO, length_us - pulse_len))
+
+        pi.wave_add_generic(wf)
+        wid = pi.wave_create()
+
+        if wid >= 0:
+            pi.wave_chain([255, 0, wid, 255, 1, num_low, num_high])
+            while pi.wave_tx_busy():
+                time.sleep(0.01)
+            pi.wave_delete(wid)
