@@ -10,6 +10,7 @@ from datetime import datetime
 import pytz
 from stepperjobcontrol import StepperJobControl
 from queue import Queue
+import os
 
 
 class StepperControllerHandler(object):
@@ -124,12 +125,12 @@ class StepperControllerHandler(object):
         arrow = Gtk.Buildable.get_name(widget)
         distance = self.joggingDistance()
         PWMfreqTextBox = self.builder.get_object("jogging_speed")
-        PWMFreq = PWMfreqTextBox.get_text()
+        PWMfreq = PWMfreqTextBox.get_text()
         self.sendQueue.put({
             'command': 'move',
             'arrow': arrow,
             'distance': distance,
-            'PWMFreq': PWMFreq})
+            'PWMfreq': int(PWMfreq)})
 
     def sunposition_calculate(self, widget, data=None):
         latitudeTextBox = self.builder.get_object("sunposition_latitude")
@@ -220,6 +221,12 @@ class StepperControllerHandler(object):
     def zero_azimuth(self, widget, data=None):
         self.position['azimuth'] = 0
         self.updatePosition()
+
+    def stopvinpy(self, widget, data=None):
+        os.system("sudo systemctl stop vinpy")
+
+    def startvinpy(self, widget, data=None):
+        os.system("sudo systemctl start vinpy")
 
 
 def app_main():

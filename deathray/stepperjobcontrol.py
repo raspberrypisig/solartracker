@@ -24,17 +24,31 @@ class StepperJobControl(threading.Thread):
             elif command == 'move':
                 distance = data['distance']
                 arrow = data['arrow']
+                PWMfreq = data['PWMfreq']
+                direction = 0
+                stepper = ''
+
                 if arrow == 'uparrow':
                     elevation = elevation - distance
+                    direction = 0
+                    stepper = 'elevation'
 
                 elif arrow == 'downarrow':
                     elevation = elevation + distance
+                    direction = 1
+                    stepper = 'elevation'
 
                 elif arrow == 'leftarrow':
                     azimuth = azimuth + distance
+                    direction = 0
+                    stepper = 'elevation'
 
                 elif arrow == 'rightarrow':
                     azimuth = azimuth - distance
+                    direction = 1
+                    stepper = 'elevation'
+
+                self.controller.move(stepper, distance, direction, PWMfreq)
 
                 self.sendQueue.put({
                     'azimuth': azimuth,
